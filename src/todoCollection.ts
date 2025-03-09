@@ -14,21 +14,24 @@ export class TodoCollection {
     }
 
     addTodo(task: string): number {
-        while (this.getTodoById(this.nextId)) {
-            this.nextId++;
-        }
+        this.nextId= this.itemMap.get(this.nextId) ? this.itemMap.get(this.nextId)!.id++: this.nextId;
         this.itemMap.set(this.nextId, new TodoItem(this.nextId, task));
+        return this.nextId;
+    }
+   /*  addTodo(task: string): number {
+        this.nextId=this.getTodoById(this.nextId).id ?? this.nextId-1;
+        this.itemMap.set(this.nextId++, new TodoItem(this.nextId+1, task));
         return this.nextId;
     }
     getTodoById(id: number) : TodoItem {
         return this.itemMap.get(id);
     }
-
-    getTodoItems(includeComplete: boolean): TodoItem[] {
+ */
+    getTodoItems(includeComplete: boolean=false): TodoItem[] {
         return [...this.itemMap.values()].filter(item => includeComplete || !item.complete);
     }
     markComplete(id: number, complete: boolean) {
-        const todoItem = this.getTodoById(id);
+        const todoItem = this.itemMap.get(id);
         if (todoItem) {
             todoItem.complete = complete;
         }

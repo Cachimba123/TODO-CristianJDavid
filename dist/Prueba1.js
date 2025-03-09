@@ -1,4 +1,5 @@
-var user = {
+"use strict";
+const User = {
     name: 'Pedro',
     id: 0,
 };

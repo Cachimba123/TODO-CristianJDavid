@@ -3,7 +3,7 @@ interface User {
     id: number;
 }
 
-const user: User = {
+const User: User = {
     name: 'Pedro',
     id: 0,
 };
