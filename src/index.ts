@@ -15,26 +15,51 @@ let input=document.getElementById("inputTask") as HTMLInputElement
 let button=document.getElementById("addTask") as HTMLButtonElement
 let listTasks=document.getElementById("todosTasks") as HTMLUListElement
 
-document.querySelector("#total")!.textContent=`Total de tareas ${collection.getItemsCount().total}. Tareas por completar ${collection.getItemsCount().incomplete}`
 document.querySelector("#titleName")!.textContent=collection.userName
 button.addEventListener("click",()=>{
+    if(!input.value) return
     collection.addTodo(input.value)
+    rechargeListTasks()
+    input.value="";
+
+})
+
+document.querySelector("#removeTask")!.addEventListener("click",()=>{
+    collection.removeComplete()
     rechargeListTasks()
 })
 
 const rechargeListTasks=(toggleComplete:boolean=true)=>{
-    collection.getTodoItems(toggleComplete).forEach(item=>{
-        let li=document.createElement("li")
-        li.textContent=item.task
-        listTasks.appendChild(li)
-    })
-}
-rechargeListTasks()
-let toggleList=document.getElementById("toggleList") as HTMLButtonElement
+    document.querySelector("#total")!.textContent=`Total de tareas ${collection.getItemsCount().total}. Tareas por completar ${collection.getItemsCount().incomplete}`
+    listTasks.innerHTML = "";
+    collection.getTodoItems(toggleComplete).forEach(item => {
+        let li = document.createElement("li");
+        let button = document.createElement("button");
 
-toggleList.addEventListener("click",()=>{
-    let toggleComplete=toggleList.textContent==="Lista completa de tareas:"
-    listTasks.innerHTML=""
-    rechargeListTasks(toggleComplete)
-    toggleList.textContent=toggleComplete?"Lista de tareras incompletas:":"Lista completa de tareas:"
-})
+        button.textContent = item.complete ? "Marcar por completar" : "Marcar como completada";
+        button.setAttribute("data-id", item.id.toString());
+        button.setAttribute("data-completed", item.complete.toString());
+
+        li.innerHTML = item.complete ? `<s>${item.task}</s>` : item.task;
+        li.appendChild(button);
+        listTasks.appendChild(li);
+
+        button.addEventListener("click", () => {
+            let id = Number(button.getAttribute("data-id"));
+            let isCompleted = button.getAttribute("data-completed") === "true";
+
+            collection.markComplete(id, !isCompleted);
+            rechargeListTasks();
+        });
+    });
+};
+
+
+rechargeListTasks()
+let toggleList = document.getElementById("toggleList");
+toggleList!.addEventListener("click", () => {
+    let toggleComplete = toggleList!.textContent != "Lista completa de tareas:";
+    listTasks.innerHTML = "";
+    rechargeListTasks(toggleComplete);
+    toggleList!.textContent = toggleComplete ? "Lista completa de tareas:":"Lista de tareras incompletas:";
+});

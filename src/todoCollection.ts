@@ -14,9 +14,11 @@ export class TodoCollection {
     }
 
     addTodo(task: string): number {
-        this.nextId= this.itemMap.get(this.nextId) ? this.itemMap.get(this.nextId)!.id++: this.nextId;
+        while (this.itemMap.has(this.nextId)) {
+            this.nextId++;
+        }
         this.itemMap.set(this.nextId, new TodoItem(this.nextId, task));
-        return this.nextId;
+        return this.nextId++;
     }
    /*  addTodo(task: string): number {
         this.nextId=this.getTodoById(this.nextId).id ?? this.nextId-1;
@@ -42,6 +44,7 @@ export class TodoCollection {
             if (item.complete) {
                 this.itemMap.delete(item.id);
             }
+            this.nextId=item.id;
         })
     }
 

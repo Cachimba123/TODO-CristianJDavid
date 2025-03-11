@@ -1,4 +1,4 @@
-import { TodoItem } from "./TodoItem";
+import { TodoItem } from "./TodoItem.js";
 export class TodoCollection {
     userName;
     todoItems;
@@ -10,9 +10,11 @@ export class TodoCollection {
         todoItems.forEach(item => this.itemMap.set(item.id, item));
     }
     addTodo(task) {
-        this.nextId = this.itemMap.get(this.nextId) ? this.itemMap.get(this.nextId).id++ : this.nextId;
+        while (this.itemMap.has(this.nextId)) {
+            this.nextId++;
+        }
         this.itemMap.set(this.nextId, new TodoItem(this.nextId, task));
-        return this.nextId;
+        return this.nextId++;
     }
     /*  addTodo(task: string): number {
          this.nextId=this.getTodoById(this.nextId).id ?? this.nextId-1;
@@ -37,6 +39,7 @@ export class TodoCollection {
             if (item.complete) {
                 this.itemMap.delete(item.id);
             }
+            this.nextId = item.id;
         });
     }
     getItemsCount() {
